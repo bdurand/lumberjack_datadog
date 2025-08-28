@@ -65,7 +65,26 @@ logger = Lumberjack::Datadog.setup(log_device, level: :info) do |config|
 end
 ```
 
-TODO: regular configuration
+TODO: regular configuration or should we get rid of setup?
+
+```ruby
+logger = Lumberjack::Logger.new(:datadog)
+```
+
+```ruby
+logger = Lumberjack::Logger.new(:datadog, output: "/var/log/app.log")
+```
+
+```ruby
+mapping = Lumberjack::Datadog.json_mapping(
+  attribute_mapping: {
+    user_id: "usr.id",
+    request_id: "http.request_id"
+  },
+  allow_all_attributes: false
+)
+logger = Lumberjack::Logger.new(:datadog, mapping: mapping)
+```
 
 ### Logging to a File
 
