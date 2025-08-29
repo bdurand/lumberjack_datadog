@@ -15,11 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking Change** Renamed gem from `lumberjack_data_dog` to `lumberjack_datadog` and renamed root module to `Lumberjack::Datadog`.
+- **Breaking Change** Renamed gem from `lumberjack_data_dog` to `lumberjack_datadog` and renamed root module to `Lumberjack::Datadog`. This is just to remove confusion around the name convention.
 - **Breaking Change** Tags are now called attributes in Lumberjack 2 so some of the method names for setting up attributes have changed.
   - `Lumberjack::Datadog::Config#allow_all_tags` is now `allow_all_attributes`.
   - `Lumberjack::Datadog::Config#tag_mapping` is now `attribute_mapping`.
   - `Lumberjack::Datadog#remap_tags` is now `remap_attributes`.
+- Truncated messages are now suffixed with an ellipsis ("…") character.
 
 ### Removed
 
