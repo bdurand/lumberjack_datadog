@@ -6,6 +6,12 @@ RSpec.describe Lumberjack::Datadog do
   let(:stream) { StringIO.new }
   let(:last_entry) { JSON.parse(stream.string.split("\n").last) }
 
+  describe "VERSION" do
+    it "has a version number" do
+      expect(Lumberjack::Datadog::VERSION).not_to be nil
+    end
+  end
+
   describe "json_mapping" do
     it "logs the time as timestamp by default" do
       mapping = Lumberjack::Datadog.json_mapping

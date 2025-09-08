@@ -8,6 +8,8 @@ require "lumberjack_json_device"
 # automatically mapping standard log attributes to Datadog's naming conventions
 # and providing structured exception and duration logging.
 module Lumberjack::Datadog
+  VERSION = ::File.read(::File.join(__dir__, "..", "..", "VERSION")).strip.freeze
+
   # Standard mapping of log attributes to Datadog fields
   # @return [Hash]
   STANDARD_ATTRIBUTE_MAPPING = {
