@@ -5,7 +5,10 @@
 # @!parse
 #   module Lumberjack::Datadog; end
 module Lumberjack::Datadog
-  # Formats exception attributes for Datadog logs
+  # Formats exception attributes for Datadog logs.
+  #
+  # This formatter converts Exception objects into structured attributes
+  # that follow Datadog's error tracking conventions.
   class ExceptionAttributeFormatter
     # Initialize the exception attribute formatter.
     #
@@ -18,8 +21,15 @@ module Lumberjack::Datadog
 
     # Format exception attributes for logging.
     #
+    # Converts an Exception object into a hash of attributes suitable for Datadog
+    # error tracking, including the exception class name, message, and stack trace.
+    #
     # @param error [Exception] The exception to format
-    # @return [Hash] Formatted exception attributes with 'kind', 'message', and 'stack' keys
+    # @return [Hash] Formatted exception attributes with the following keys:
+    #   - 'kind': Exception class name
+    #   - 'message': Exception message
+    #   - 'stack': Array of stack trace strings (if backtrace available)
+    #   - Additional keys from @additional_attributes if specified
     def call(error)
       error_attributes = {"kind" => error.class.name, "message" => error.message}
 

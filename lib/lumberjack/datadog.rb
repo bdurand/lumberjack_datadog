@@ -7,11 +7,35 @@ require "lumberjack_json_device"
 # This module provides JSON logging functionality specifically designed for Datadog,
 # automatically mapping standard log attributes to Datadog's naming conventions
 # and providing structured exception and duration logging.
+#
+# @example Basic usage
+#   logger = Lumberjack::Logger.new(:datadog)
+#   logger.info("Application started")
+#
+# @example Advanced configuration
+#   logger = Lumberjack::Logger.new(:datadog,
+#     max_message_length: 1000,
+#     allow_all_attributes: false,
+#     attribute_mapping: { request_id: "trace_id" }
+#   )
+#
+# @see Device
+# @see Config
 module Lumberjack::Datadog
+  # Version of the lumberjack_datadog gem
+  # @return [String] The current version string
   VERSION = ::File.read(::File.join(__dir__, "..", "..", "VERSION")).strip.freeze
 
-  # Standard mapping of log attributes to Datadog fields
-  # @return [Hash]
+  # Standard mapping of log attributes to Datadog fields.
+  #
+  # This constant defines the default attribute mapping used to transform
+  # Lumberjack log entries into Datadog-compatible format.
+  #
+  # @return [Hash] Mapping hash with the following transformations:
+  #   - :time → "timestamp"
+  #   - :severity → "status"
+  #   - :progname → ["logger", "name"] (nested attribute)
+  #   - :pid → "pid"
   STANDARD_ATTRIBUTE_MAPPING = {
     time: "timestamp",
     severity: "status",
@@ -20,12 +44,23 @@ module Lumberjack::Datadog
   }.freeze
 
   class << self
-    # Returns a mapping of log attributes to JSON fields for Datadog
-    # @param pid [Boolean, Symbol] Include process ID
-    # @param attribute_mapping [Hash] Custom attribute mapping
-    # @param allow_all_attributes [Boolean] Allow all attributes
-    # @param max_message_length [Integer, nil] Maximum message length
-    # @return [Hash]
+    # Returns a mapping of log attributes to JSON fields for Datadog.
+    #
+    # This method creates the attribute mapping configuration used by the JSON device
+    # to transform log entries into Datadog-compatible format.
+    #
+    # @param pid [Boolean, Symbol] Include process ID in logs. Options:
+    #   - true: Include current process ID (default)
+    #   - false: Exclude process ID
+    #   - :global: Use globally unique process ID
+    # @param attribute_mapping [Hash] Custom attribute name mapping. Keys are original
+    #   attribute names (symbols), values can be strings, arrays (for nested attributes),
+    #   or procs for custom formatting.
+    # @param allow_all_attributes [Boolean] Whether to include all log entry attributes
+    #   at the root level of JSON output. Default is true.
+    # @param max_message_length [Integer, nil] Maximum message length. Messages longer
+    #   than this will be truncated. Default is nil (no truncation).
+    # @return [Hash] Complete mapping configuration for the JSON device
     def json_mapping(pid: true, attribute_mapping: {}, allow_all_attributes: true, max_message_length: nil)
       mapping = STANDARD_ATTRIBUTE_MAPPING.dup
 
@@ -50,16 +85,24 @@ module Lumberjack::Datadog
 
     # Convenience method for setting up a Datadog logger with a block configuration.
     #
-    # This method is no longer really needed since Lumberjack 2 makes setting up logger from
-    # the constructor easier.
+    # This method provides a block-based configuration approach that was more useful
+    # in earlier versions of Lumberjack. With Lumberjack 2+, you can achieve the same
+    # results more directly using {Lumberjack::Logger.new} with the :datadog device.
     #
-    # @param stream [IO, String, Pathname] Output stream or path
-    # @param options [Hash] Logger options
-    # @yield [Lumberjack::Datadog::Config] Block for setting up a configuration object for
-    #   configuring aspects of the logger.
-    # @return [Lumberjack::Logger]
+    # @param stream [IO, String, Pathname] Output stream or path for log output.
+    #   Default is $stdout.
+    # @param options [Hash] Additional logger options passed to Lumberjack::Logger.new
+    # @yield [Lumberjack::Datadog::Config] Block for configuring the logger behavior
+    # @return [Lumberjack::Logger] Configured logger instance
+    #
+    # @example Block configuration
+    #   logger = Lumberjack::Datadog.setup($stdout, level: :info) do |config|
+    #     config.max_message_length = 500
+    #     config.pretty = true
+    #   end
     #
     # @see Config
+    # @see Device
     def setup(stream = $stdout, options = {}, &block)
       config = Config.new
       yield(config) if block_given?
@@ -85,8 +128,8 @@ module Lumberjack::Datadog
     # Creates a new logger instance with the provided configuration.
     #
     # @param stream [IO, String, Pathname] Output stream or path
-    # @param options [Hash] Logger options
-    # @param config [Lumberjack::Datadog::Config] Configuration object
+    # @param options [Hash] Logger options to pass to Lumberjack::Logger.new
+    # @param config [Lumberjack::Datadog::Config] Configuration object with settings
     # @return [Lumberjack::Logger] Configured logger instance
     def new_logger(stream, options, config)
       mapping = json_mapping(
