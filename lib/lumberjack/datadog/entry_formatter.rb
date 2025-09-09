@@ -39,6 +39,15 @@ module Lumberjack::Datadog
 
     # Add duration formatters that convert various duration units to nanoseconds.
     #
+    # This method registers formatters for different duration attributes:
+    # - :duration - Converts seconds to nanoseconds
+    # - :duration_ms - Converts milliseconds to nanoseconds  
+    # - :duration_micros - Converts microseconds to nanoseconds
+    # - :duration_ns - Converts nanoseconds to integer (no unit conversion)
+    #
+    # All duration values are remapped to the standard "duration" attribute
+    # expected by Datadog, with values in nanoseconds.
+    #
     # @return [void]
     def add_duration_formatters
       attributes do

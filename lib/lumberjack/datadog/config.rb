@@ -73,8 +73,14 @@ module Lumberjack::Datadog
       @attribute_mapping = @attribute_mapping.merge(attribute_mapping)
     end
 
-    # Validate configuration options
-    # @raise [ArgumentError] if options are invalid
+    # Validate configuration options to ensure they are properly set.
+    #
+    # Checks that:
+    # - max_message_length is nil or a positive integer
+    # - backtrace_cleaner is nil or responds to #clean method
+    #
+    # @raise [ArgumentError] if max_message_length is not nil or a positive integer
+    # @raise [ArgumentError] if backtrace_cleaner doesn't respond to #clean
     # @return [void]
     def validate!
       if !max_message_length.nil? && (!max_message_length.is_a?(Integer) || max_message_length <= 0)

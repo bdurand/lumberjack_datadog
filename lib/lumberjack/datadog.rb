@@ -22,10 +22,20 @@ require "lumberjack_json_device"
 # @see Device
 # @see Config
 module Lumberjack::Datadog
+  # Version of the lumberjack_datadog gem
+  # @return [String] The current version string
   VERSION = ::File.read(::File.join(__dir__, "..", "..", "VERSION")).strip.freeze
 
-  # Standard mapping of log attributes to Datadog fields
-  # @return [Hash]
+  # Standard mapping of log attributes to Datadog fields.
+  #
+  # This constant defines the default attribute mapping used to transform
+  # Lumberjack log entries into Datadog-compatible format.
+  #
+  # @return [Hash] Mapping hash with the following transformations:
+  #   - :time → "timestamp"
+  #   - :severity → "status" 
+  #   - :progname → ["logger", "name"] (nested attribute)
+  #   - :pid → "pid"
   STANDARD_ATTRIBUTE_MAPPING = {
     time: "timestamp",
     severity: "status",

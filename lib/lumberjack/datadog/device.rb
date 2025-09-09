@@ -49,6 +49,10 @@ module Lumberjack::Datadog
 
     # Write a log entry with Datadog-specific formatting applied.
     #
+    # This method applies the configured entry formatter to transform
+    # the log entry's message and attributes before passing it to the
+    # parent JSON device for output.
+    #
     # @param entry [Lumberjack::LogEntry] The log entry to write
     # @return [void]
     def write(entry)
