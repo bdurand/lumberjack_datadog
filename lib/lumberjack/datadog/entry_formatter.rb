@@ -6,6 +6,11 @@
 #   class Lumberjack::Datadog::EntryFormatter < Lumberjack::EntryFormatter; end
 module Lumberjack::Datadog
   # Formats log entries for Datadog with exception and duration handling.
+  #
+  # This formatter automatically adds specialized formatting for:
+  # - Exception objects: Structured with 'kind', 'message', and 'stack' attributes
+  # - Duration values: Converted from seconds to nanoseconds for Datadog
+  # - Duration units: Support for ms, micros, and ns suffixed attributes
   class EntryFormatter < Lumberjack::EntryFormatter
     # Initialize the entry formatter with Datadog-specific formatters.
     #

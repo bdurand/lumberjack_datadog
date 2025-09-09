@@ -6,6 +6,20 @@
 #   class Lumberjack::Datadog::Device < Lumberjack::JsonDevice; end
 module Lumberjack::Datadog
   # Device for sending logs to Datadog with automatic attribute mapping and formatting.
+  #
+  # This device extends Lumberjack::JsonDevice to provide Datadog-specific functionality
+  # including standard attribute mapping, exception formatting, and duration conversion.
+  # It automatically registers itself as the :datadog device type.
+  #
+  # @example Basic usage
+  #   logger = Lumberjack::Logger.new(:datadog, output: $stdout)
+  #
+  # @example With custom options
+  #   logger = Lumberjack::Logger.new(:datadog,
+  #     output: "/var/log/app.log",
+  #     max_message_length: 1000,
+  #     allow_all_attributes: false
+  #   )
   class Device < Lumberjack::JsonDevice
     Lumberjack::DeviceRegistry.add(:datadog, self)
 

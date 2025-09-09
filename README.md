@@ -51,15 +51,17 @@ logger = Lumberjack::Logger.new(:datadog,
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `max_message_length` | Integer or nil | `nil` | Maximum length for log messages. Messages longer than this will be truncated with an ellipsis. |
-| `allow_all_attributes` | Boolean | `true` | Whether to include all log entry attributes at the root level of the JSON output. |
-| `attribute_mapping` | Hash | `{}` | Custom mapping of attribute names. Values can be strings, arrays (for nested attributes), or procs for custom formatting. |
+| `allow_all_attributes` | Boolean | `true` | Whether to include all log entry attributes at the root level of the JSON output. When false, only explicitly mapped attributes are included. |
+| `attribute_mapping` | Hash | `{}` | Custom mapping of attribute names. Keys are original names (symbols), values can be strings, arrays (for nested attributes), or procs for custom formatting. |
+| `pid` | Boolean or Symbol | `true` | Process ID handling: `true` (include current PID), `false` (exclude PID), or `:global` (globally unique PID with hostname). |
+| `backtrace_cleaner` | Object or nil | `nil` | Optional backtrace cleaner that responds to `#clean` method for cleaning exception stack traces. |
 
 > [!TIP]
 > You can also pass `pretty: true` in development mode to have more human readable logs if you aren't sending them to Datadog.
 
 #### Configuration Block
 
-Alternatively, you can use the `setup` method with a configuration block for complex setups:
+Alternatively, you can use the `setup` method with a configuration block for complex setups. Note that this approach is maintained for compatibility, but the direct constructor approach shown above is generally preferred for new code.
 
 ```ruby
 logger = Lumberjack::Datadog.setup($stdout, level: :info) do |config|
@@ -69,7 +71,7 @@ logger = Lumberjack::Datadog.setup($stdout, level: :info) do |config|
   # Process ID options
   config.pid = true           # Include current process ID (default)
   config.pid = false          # Don't include process ID
-  config.pid = :global        # Use a globally unique process ID
+  config.pid = :global        # Use a globally unique process ID (includes hostname)
 
   # Attribute handling
   config.allow_all_attributes = true  # Include all log attributes at root level (default)
@@ -78,7 +80,7 @@ logger = Lumberjack::Datadog.setup($stdout, level: :info) do |config|
   # Custom attribute mapping and formatting
   config.remap_attributes(
     request_id: "trace_id",  # Simple remapping
-    user: "usr.id"           # Nested attribute mapping
+    user_id: "usr.id"        # Nested attribute mapping
   )
 
   # Pretty print JSON (useful for development)
@@ -110,7 +112,7 @@ rescue => e
 end
 ```
 
-You can pass in a custom backtrace cleaner for exceptions. This can be any object that responds to the `clean` method that takes an array of strings and returns an array of strings. If you in a Rails environment, you can pass in `Rails.backtrace_cleaner`.
+You can pass in a custom backtrace cleaner for exceptions. This can be any object that responds to the `clean` method that takes an array of strings and returns an array of strings. If you are in a Rails environment, you can pass in `Rails.backtrace_cleaner`.
 
 ```ruby
 logger = Lumberjack::Logger.new(:datadog, backtrace_cleaner: Rails.backtrace_cleaner)
@@ -118,7 +120,7 @@ logger = Lumberjack::Logger.new(:datadog, backtrace_cleaner: Rails.backtrace_cle
 
 ### Duration Logging
 
-Duration values are automatically converted to nanoseconds in the Datadog standard `@duration` attribute from the `duration` attribute. This keeps the Ruby code clean since Ruby measures time in seconds. There are helpers for logging durations in milliseconds, microseconds, and nanoseconds.
+Duration values are automatically converted to nanoseconds in the Datadog standard `duration` attribute from the `duration` attribute. This keeps the Ruby code clean since Ruby measures time in seconds. There are helpers for logging durations in milliseconds, microseconds, and nanoseconds.
 
 ```ruby
 duration = Benchmark.realtime do

@@ -5,19 +5,28 @@
 # @!parse
 #   class Lumberjack::Datadog::Config; end
 module Lumberjack::Datadog
-  # Configuration options for Datadog logger
-  # @!attribute max_message_length
-  #   @return [Integer, nil] Maximum message length
-  # @!attribute backtrace_cleaner
-  #   @return [Object, nil] Backtrace cleaner
-  # @!attribute pid
-  #   @return [Boolean, Symbol] PID option
-  # @!attribute allow_all_attributes
-  #   @return [Boolean] Allow all attributes
-  # @!attribute attribute_mapping
-  #   @return [Hash] Custom attribute mapping
-  # @!attribute pretty
-  #   @return [Boolean] Pretty print option
+  # Configuration options for Datadog logger setup.
+  #
+  # This class provides a configuration object for customizing the behavior
+  # of Datadog loggers when using the {Lumberjack::Datadog.setup} method.
+  #
+  # @!attribute [rw] max_message_length
+  #   @return [Integer, nil] Maximum length for log messages. Messages longer than this 
+  #     will be truncated with an ellipsis. Default is nil (no truncation).
+  # @!attribute [rw] backtrace_cleaner
+  #   @return [Object, nil] Optional backtrace cleaner that responds to #clean method.
+  #     Used for cleaning exception stack traces. Default is nil.
+  # @!attribute [rw] pid
+  #   @return [Boolean, Symbol] Process ID inclusion option. Can be true (include current PID),
+  #     false (exclude PID), or :global (use globally unique PID). Default is true.
+  # @!attribute [rw] allow_all_attributes
+  #   @return [Boolean] Whether to include all log entry attributes at the root level 
+  #     of the JSON output. Default is true.
+  # @!attribute [r] attribute_mapping
+  #   @return [Hash] Custom mapping of attribute names. Use {#remap_attributes} to modify.
+  # @!attribute [rw] pretty
+  #   @return [Boolean] Whether to pretty-print JSON output. Useful for development.
+  #     Default is false.
   class Config
     attr_accessor :max_message_length
     attr_accessor :backtrace_cleaner
@@ -52,9 +61,14 @@ module Lumberjack::Datadog
     # @deprecated
     attr_reader :thread_name
 
-    # Remap log attributes
-    # @param attribute_mapping [Hash] Additional attribute mappings
-    # @return [Hash] Updated attribute mapping
+    # Remap log attributes by merging additional attribute mappings.
+    #
+    # @param attribute_mapping [Hash] Additional attribute mappings to merge.
+    #   Keys are the original attribute names (symbols), values are the target
+    #   field names (strings, arrays for nested fields, or procs for custom formatting).
+    # @return [Hash] The updated attribute mapping hash
+    # @example Simple attribute remapping
+    #   config.remap_attributes(request_id: "trace_id", user_id: "usr.id")
     def remap_attributes(attribute_mapping)
       @attribute_mapping = @attribute_mapping.merge(attribute_mapping)
     end
