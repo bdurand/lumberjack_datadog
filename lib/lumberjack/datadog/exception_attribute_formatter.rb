@@ -27,7 +27,7 @@ module Lumberjack::Datadog
     # @param error [Exception] The exception to format
     # @return [Hash] Formatted exception attributes with the following keys:
     #   - 'kind': Exception class name
-    #   - 'message': Exception message  
+    #   - 'message': Exception message
     #   - 'stack': Array of stack trace strings (if backtrace available)
     #   - Additional keys from @additional_attributes if specified
     def call(error)

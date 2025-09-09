@@ -11,7 +11,7 @@ module Lumberjack::Datadog
   # of Datadog loggers when using the {Lumberjack::Datadog.setup} method.
   #
   # @!attribute [rw] max_message_length
-  #   @return [Integer, nil] Maximum length for log messages. Messages longer than this 
+  #   @return [Integer, nil] Maximum length for log messages. Messages longer than this
   #     will be truncated with an ellipsis. Default is nil (no truncation).
   # @!attribute [rw] backtrace_cleaner
   #   @return [Object, nil] Optional backtrace cleaner that responds to #clean method.
@@ -20,7 +20,7 @@ module Lumberjack::Datadog
   #   @return [Boolean, Symbol] Process ID inclusion option. Can be true (include current PID),
   #     false (exclude PID), or :global (use globally unique PID). Default is true.
   # @!attribute [rw] allow_all_attributes
-  #   @return [Boolean] Whether to include all log entry attributes at the root level 
+  #   @return [Boolean] Whether to include all log entry attributes at the root level
   #     of the JSON output. Default is true.
   # @!attribute [r] attribute_mapping
   #   @return [Hash] Custom mapping of attribute names. Use {#remap_attributes} to modify.

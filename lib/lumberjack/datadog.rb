@@ -33,7 +33,7 @@ module Lumberjack::Datadog
   #
   # @return [Hash] Mapping hash with the following transformations:
   #   - :time → "timestamp"
-  #   - :severity → "status" 
+  #   - :severity → "status"
   #   - :progname → ["logger", "name"] (nested attribute)
   #   - :pid → "pid"
   STANDARD_ATTRIBUTE_MAPPING = {

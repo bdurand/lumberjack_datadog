@@ -41,7 +41,7 @@ module Lumberjack::Datadog
     #
     # This method registers formatters for different duration attributes:
     # - :duration - Converts seconds to nanoseconds
-    # - :duration_ms - Converts milliseconds to nanoseconds  
+    # - :duration_ms - Converts milliseconds to nanoseconds
     # - :duration_micros - Converts microseconds to nanoseconds
     # - :duration_ns - Converts nanoseconds to integer (no unit conversion)
     #
