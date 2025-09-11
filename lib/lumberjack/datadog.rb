@@ -83,6 +83,34 @@ module Lumberjack::Datadog
       mapping.transform_keys!(&:to_s)
     end
 
+    def entry_formatter(backtrace_cleaner: nil)
+      Lumberjack::EntryFormatter.build do |formatter|
+        formatter.add(Exception) do |error|
+          Lumberjack::MessageAttributes.new(error.inspect, error: error)
+        end
+
+        formatter.add_attribute_class(Exception, Lumberjack::Datadog::ExceptionAttributeFormatter.new(backtrace_cleaner: backtrace_cleaner))
+
+        formatter.add_attribute(:duration) do |seconds|
+          (seconds.to_f * 1_000_000_000).round
+        end
+
+        formatter.add_attribute(:duration_ms) do |millis|
+          nanoseconds = (millis.to_f * 1_000_000).round
+          Lumberjack::RemapAttribute.new("duration" => nanoseconds)
+        end
+
+        formatter.add_attribute(:duration_micros) do |micros|
+          nanoseconds = (micros.to_f * 1_000).round
+          Lumberjack::RemapAttribute.new("duration" => nanoseconds)
+        end
+
+        formatter.add_attribute(:duration_ns) do |ns|
+          Lumberjack::RemapAttribute.new("duration" => ns.to_i)
+        end
+      end
+    end
+
     # Convenience method for setting up a Datadog logger with a block configuration.
     #
     # This method provides a block-based configuration approach that was more useful
@@ -158,5 +186,4 @@ end
 
 require_relative "datadog/config"
 require_relative "datadog/device"
-require_relative "datadog/entry_formatter"
 require_relative "datadog/exception_attribute_formatter"

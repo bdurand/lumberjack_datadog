@@ -42,7 +42,7 @@ module Lumberjack::Datadog
       datadog_options[:mapping] ||= Lumberjack::Datadog.json_mapping(**mapping_options.compact)
 
       backtrace_cleaner = datadog_options.delete(:backtrace_cleaner)
-      @entry_formatter = Lumberjack::Datadog::EntryFormatter.new(backtrace_cleaner: backtrace_cleaner)
+      @entry_formatter = Lumberjack::Datadog.entry_formatter(backtrace_cleaner: backtrace_cleaner)
 
       super(datadog_options)
     end
