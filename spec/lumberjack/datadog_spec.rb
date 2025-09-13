@@ -217,7 +217,7 @@ RSpec.describe Lumberjack::Datadog do
 
     it "can log a thread name" do
       logger = nil
-      Lumberjack::Utils.with_deprecation_mode("silent") do
+      Lumberjack::Utils.with_deprecation_mode(:silent) do
         logger = Lumberjack::Datadog.setup(stream) do |config|
           config.thread_name = true
         end
@@ -228,7 +228,7 @@ RSpec.describe Lumberjack::Datadog do
 
     it "can log a global thread name" do
       logger = nil
-      Lumberjack::Utils.with_deprecation_mode("silent") do
+      Lumberjack::Utils.with_deprecation_mode(:silent) do
         logger = Lumberjack::Datadog.setup(stream) do |config|
           config.thread_name = :global
         end
