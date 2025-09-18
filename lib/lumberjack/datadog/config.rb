@@ -52,7 +52,7 @@ module Lumberjack::Datadog
     # @return [void]
     # @deprecated
     def thread_name=(value)
-      message = "Setting @logger.thread_name through the logger setup is deprecated. Call logger.tag!(\"logger.thread_name\" => -> { Lumberjack::Utils.global_thread_id }) instead."
+      message = "Setting @logger.thread_name through the logger setup is deprecated and will be removed in version 2.1.; call logger.tag!(\"logger.thread_name\" => -> { Lumberjack::Utils.global_thread_id }) instead."
       Lumberjack::Utils.deprecated(:thread_name=, message) do
         @thread_name = value
       end
