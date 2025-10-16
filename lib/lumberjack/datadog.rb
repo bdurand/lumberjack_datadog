@@ -85,27 +85,27 @@ module Lumberjack::Datadog
 
     def entry_formatter(backtrace_cleaner: nil)
       Lumberjack::EntryFormatter.build do |formatter|
-        formatter.add(Exception) do |error|
+        formatter.format_class(Exception) do |error|
           Lumberjack::MessageAttributes.new(error.inspect, error: error)
         end
 
-        formatter.add_attribute_class(Exception, Lumberjack::Datadog::ExceptionAttributeFormatter.new(backtrace_cleaner: backtrace_cleaner))
+        formatter.format_attribute(Exception, Lumberjack::Datadog::ExceptionAttributeFormatter.new(backtrace_cleaner: backtrace_cleaner))
 
-        formatter.add_attribute(:duration) do |seconds|
+        formatter.format_attribute_name(:duration) do |seconds|
           (seconds.to_f * 1_000_000_000).round
         end
 
-        formatter.add_attribute(:duration_ms) do |millis|
+        formatter.format_attribute_name(:duration_ms) do |millis|
           nanoseconds = (millis.to_f * 1_000_000).round
           Lumberjack::RemapAttribute.new("duration" => nanoseconds)
         end
 
-        formatter.add_attribute(:duration_micros) do |micros|
+        formatter.format_attribute_name(:duration_micros) do |micros|
           nanoseconds = (micros.to_f * 1_000).round
           Lumberjack::RemapAttribute.new("duration" => nanoseconds)
         end
 
-        formatter.add_attribute(:duration_ns) do |ns|
+        formatter.format_attribute_name(:duration_ns) do |ns|
           Lumberjack::RemapAttribute.new("duration" => ns.to_i)
         end
       end
